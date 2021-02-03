@@ -25,7 +25,8 @@ The goal of appsilonRShinyTaskAarshBatra is to ...
 You can install the released version of appsilonRShinyTaskAarshBatra from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("appsilonRShinyTaskAarshBatra")
+
+# install.packages("appsilonRShinyTaskAarshBatra")
 ```
 
 ## Example
@@ -33,7 +34,7 @@ install.packages("appsilonRShinyTaskAarshBatra")
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(appsilonRShinyTaskAarshBatra)
+# library(appsilonRShinyTaskAarshBatra)
 ## basic example code
 ```
 
