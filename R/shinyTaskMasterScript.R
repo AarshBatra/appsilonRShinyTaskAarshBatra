@@ -106,10 +106,24 @@ base::summary(raw_data)
 # exploring: cleaned dataset---------------------------------------------------
 cleaned_data <- clean_raw_data(raw_data)
 
+
 View(cleaned_data)
 
-filter_cleaned_data <- function(cleaned_data, ship_type = "cargo",
-                                ship_name = "MERI"){
+# finding the ship_type/ship_name group with most variation in lat and long
+# to use as a work case for testing code.
+
+cleaned_data %>%
+  dplyr::group_by(ship_type, SHIPNAME) %>%
+  dplyr::summarise(var_in_lat = sd(LAT), var_in_lon = sd(LON)) %>%
+  dplyr::filter(var_in_lat == max(var_in_lat), var_in_lon == max(var_in_lon))
+
+# it turns out that the duo with ship_type = "Tanker" and ship_name = "MARINUS"
+# has the most variation in Latitude and Longitude, so for the filtering
+# function I will set these values as the default values.
+
+
+filter_cleaned_data <- function(cleaned_data, ship_type = "Tanker",
+                                ship_name = "MARINUS"){
   filtered_cleaned_data <- cleaned_data %>%
     dplyr::filter(ship_type == ship_type,
                   SHIPNAME == ship_name)
@@ -117,14 +131,48 @@ filter_cleaned_data <- function(cleaned_data, ship_type = "cargo",
 }
 
 filtered_cleaned_data <- filter_cleaned_data(cleaned_data)
+
+# main for loop that calculates max distance travelled for each ship.
+
+# setting empty data structures
+num_col_needed_to_calc_dist <- 2 # LON and LAT
+max_tibble <- as.data.frame(matrix(NA, nrow = num_col_needed_to_calc_dist,
+                     ncol = ncol(filtered_cleaned_data)))
+colnames(max_tibble) <- colnames(filtered_cleaned_data)
+
+max_dist <- -1 # This is the default placeholder which will be updated to
+               # 0 (or more, given distance calculations) once the main
+               # for loop starts calculating distances. This as of now
+               # just serves as a dummy. Don't get confused by the negative
+               # sign as this is just a dummy placeholder variable. The unit
+               # in which this variable is measured is meters.
+
+for(i in 1 : (nrow(filtered_cleaned_data) - 1)){
+ current_tibble <- filtered_cleaned_data[(i:(i+1)), ]
+ current_tibble_dist_cols <- current_tibble[, (1 : num_col_needed_to_calc_dist)]
+ curr_dist <- geodist::geodist(current_tibble_dist_cols,
+                               sequential = TRUE,
+                             measure = "geodesic")
+ print(current_tibble)
+ print(current_tibble_dist_cols)
+ print(dim(current_tibble_dist_cols))
+ print(curr_dist)
+ print(i)
+ if(abs(curr_dist) >= max_dist){
+   max_dist <- curr_dist
+   max_tibble <- current_tibble
+ } else {
+   next
+ }
+}
+
+#
 #
 # foo <- geodist(cleaned_ships_data[1, 2:1], cleaned_ships_data[2, 2:1],
 #         measure = "geodesic")
 # foo/1000
 #
 # geodist(foo, sequential = TRUE, measure = "haversine")/1000
-
-
 
 
 
