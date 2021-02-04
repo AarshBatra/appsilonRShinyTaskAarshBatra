@@ -79,7 +79,6 @@ read_raw_data <- function(path_to_file){
 #'
 #' @export
 
-
 clean_raw_data <- function(raw_data){
 
   # rearrange dates into chronological order
@@ -92,6 +91,104 @@ clean_raw_data <- function(raw_data){
 }
 
 
+#' filter cleaned data
+#'
+#'  Filters cleaned data using columns \code{ship_type} and \code{ship_name}
+#'
+#'  @importFrom dplyr filter
+#'
+#'  @param cleaned_data this is the clean dataset (which is obtained as a
+#'                     result of cleaning the raw dataset that is read into R.
+#'                     This dataset will be filtered in this function.
+#'
+#'  @param ship_type type of ship with the default value "Tanker"
+#'  @param ship_name name of ship with the default value "MARINUS"
+#'
+#'  @return returns cleaned filtered dataset given input values to parameters
+#'
+#'  @examples
+#'  filter_cleaned_data(cleaned_data = cleaned_dataset, ship_type = "Cargo",
+#'  ship_name = "MERI")
+#'
+#'  @export
+
+filter_cleaned_data <- function(cleaned_data, ship_type = "Tanker",
+                                ship_name = "MARINUS"){
+  filtered_cleaned_data <- cleaned_data %>%
+    dplyr::filter(ship_type == ship_type,
+                  SHIPNAME == ship_name)
+  filtered_cleaned_data
+}
+
+
+#' Calculate max distance travelled between two (lat, lon) points
+#'
+#' Function that calculates max distance traveled (b/w 2 consecutive points)
+#' for a given ship_type/ship_name pair
+#'
+#' @importFrom dplyr filter
+#' @importFrom base matrix colnames abs
+#' @importFrom geodist geodist
+#'
+#'
+#' @param cleaned_data this is the clean dataset (which is obtained as a
+#'                     result of cleaning the raw dataset that is read into R
+#'
+#' @param filter_ship_type type of ship with the default value "Tanker"
+#' @param filter_ship_name name of ship with the default value "MARINUS"
+#'
+#' @return returns a list containing 2 elements. First element returned is the
+#'         \code{max_dist}: max distance. Second element returned is the
+#'         \code{max_tibble}: a tibble that contains all data that
+#'         correspond to the points b/w which the given ship in question
+#'         travelled the maximum distance.
+#'
+#' @examples
+#' max_dist_travelled(cleaned_data = cleaned_dataset,
+#' filter_ship_type = "Cargo", filter_ship_name = "MERI")
+#'
+#'
+#' @export
+
+max_dist_travelled <- function(cleaned_data,
+                               filter_ship_type = "Tanker", filter_ship_name = "MARINUS"){
+
+  # filter the cleaned data
+  filtered_cleaned_data <- cleaned_data %>%
+    dplyr::filter(ship_type == filter_ship_type,
+                  SHIPNAME == filter_ship_name)
+
+
+  # setting empty data structures
+  num_col_needed_to_calc_dist <- 2 # LON and LAT
+  max_tibble <- as.data.frame(matrix(NA, nrow = num_col_needed_to_calc_dist,
+                                     ncol = ncol(filtered_cleaned_data)))
+  colnames(max_tibble) <- colnames(filtered_cleaned_data)
+
+  max_dist <- -1 # This is the default placeholder which will be updated to
+  # 0 (or more, given distance calculations) once the main
+  # for loop starts calculating distances. This as of now
+  # just serves as a dummy. Don't get confused by the negative
+  # sign as this is just a dummy placeholder variable. The unit
+  # in which this variable is measured is meters.
+
+  for(i in 1 : (nrow(filtered_cleaned_data) - 1)){
+    current_tibble <- filtered_cleaned_data[(i:(i+1)), ]
+    current_tibble_dist_cols <- current_tibble[,
+                                               (1 : num_col_needed_to_calc_dist)]
+    curr_dist <- geodist::geodist(current_tibble_dist_cols,
+                                  sequential = TRUE,
+                                  measure = "geodesic")
+
+    if(abs(curr_dist) >= max_dist){
+      max_dist <- curr_dist
+      max_tibble <- current_tibble
+    } else {
+      next
+    }
+  }
+  return(list(max_dist, max_tibble))
+}
 
 
 
@@ -103,85 +200,41 @@ length(unique(raw_data$SHIP_ID))
 base::summary(raw_data)
 
 
-# exploring: cleaned dataset---------------------------------------------------
+# All function definitions completed-------------------------------------------
+#-----------------------------------------------------------------------------#
+
+
+
+# building a test case --------------------------------------------------------
 cleaned_data <- clean_raw_data(raw_data)
-
-
-View(cleaned_data)
 
 # finding the ship_type/ship_name group with most variation in lat and long
 # to use as a work case for testing code.
 
-cleaned_data %>%
+cleaned_data_test_case <- cleaned_data %>%
   dplyr::group_by(ship_type, SHIPNAME) %>%
   dplyr::summarise(var_in_lat = sd(LAT), var_in_lon = sd(LON)) %>%
   dplyr::filter(var_in_lat == max(var_in_lat), var_in_lon == max(var_in_lon))
 
 # it turns out that the duo with ship_type = "Tanker" and ship_name = "MARINUS"
-# has the most variation in Latitude and Longitude, so for the filtering
-# function I will set these values as the default values.
-
-
-filter_cleaned_data <- function(cleaned_data, ship_type = "Tanker",
-                                ship_name = "MARINUS"){
-  filtered_cleaned_data <- cleaned_data %>%
-    dplyr::filter(ship_type == ship_type,
-                  SHIPNAME == ship_name)
-  filtered_cleaned_data
-}
+# has the most variation in Latitude and Longitude (together), so for the
+# filtering function I have set these values as the default values.
 
 filtered_cleaned_data <- filter_cleaned_data(cleaned_data)
 
-# main for loop that calculates max distance travelled for each ship.
-
-# setting empty data structures
-num_col_needed_to_calc_dist <- 2 # LON and LAT
-max_tibble <- as.data.frame(matrix(NA, nrow = num_col_needed_to_calc_dist,
-                     ncol = ncol(filtered_cleaned_data)))
-colnames(max_tibble) <- colnames(filtered_cleaned_data)
-
-max_dist <- -1 # This is the default placeholder which will be updated to
-               # 0 (or more, given distance calculations) once the main
-               # for loop starts calculating distances. This as of now
-               # just serves as a dummy. Don't get confused by the negative
-               # sign as this is just a dummy placeholder variable. The unit
-               # in which this variable is measured is meters.
-
-# for(i in 1 : (nrow(filtered_cleaned_data) - 1)){
-#  current_tibble <- filtered_cleaned_data[(i:(i+1)), ]
-#  current_tibble_dist_cols <- current_tibble[, (1 : num_col_needed_to_calc_dist)]
-#  curr_dist <- geodist::geodist(current_tibble_dist_cols,
-#                                sequential = TRUE,
-#                              measure = "geodesic")
-#  print(current_tibble)
-#  print(current_tibble_dist_cols)
-#  print(dim(current_tibble_dist_cols))
-#  print(curr_dist)
-#  print(i)
-#  if(abs(curr_dist) >= max_dist){
-#    max_dist <- curr_dist
-#    max_tibble <- current_tibble
-#  } else {
-#    next
-#  }
-# }
-
-#
-#
-# foo <- geodist(cleaned_ships_data[1, 2:1], cleaned_ships_data[2, 2:1],
-#         measure = "geodesic")
-# foo/1000
-#
-# geodist(foo, sequential = TRUE, measure = "haversine")/1000
+data_for_leaflet_map <- max_dist_travelled(cleaned_data = cleaned_data,
+                                           filter_ship_type = "Tanker",
+                                           filter_ship_name = "MARINUS")
 
 
-
-
-
-
-
-
-
+leaflet::leaflet() %>%
+  setView(lng = 18.9, lat = 54.8 , zoom = 3) %>%
+  addProviderTiles("Esri.WorldStreetMap") %>%
+  addAwesomeMarkers(
+    data = data_for_leaflet_map[[2]][, (1:2)]
+  ) %>%
+  addPolylines(lng = unlist(data_for_leaflet_map[[2]][(1:2), 1]),
+               lat = unlist(data_for_leaflet_map[[2]][(1:2), 2]))
 
 
 

@@ -37,12 +37,12 @@ marine_server <- function(id, df){
     })
 
     updatedData <- reactive({
-      nrow(df())
+      filter(df(), ship_type == ship_type()) # nrow(df()) works
     })
 
 
     output$test <- renderText({
-      paste(updatedData())
+      paste(updatedData()$SHIPNAME) # paste(updatedData()) works
     })
 
     # update_dropdown_input(session, "ship_name_dropdown",

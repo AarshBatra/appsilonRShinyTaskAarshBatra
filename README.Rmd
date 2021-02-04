@@ -2,7 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -18,38 +17,31 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of appsilonRShinyTaskAarshBatra is to ...
+The goal of appsilonRShinyTaskAarshBatra is to visualize the marine dataset to 
+figure out the max distance travelled by a ship beween two consecutive points 
+given all of its trips.
 
-## Installation
+## App
 
-You can install the released version of appsilonRShinyTaskAarshBatra from [CRAN](https://CRAN.R-project.org) with:
+* You can view the appsilonRShinyTaskAarshBatra app 
+  [here](https://CRAN.R-project.org)
+  
+* To view underlying app code, look into the **app.R** file.
 
-``` r
+## Code
 
-# install.packages("appsilonRShinyTaskAarshBatra")
-```
+* All of the functions used to make distance calculations can be found in 
+  the **shinyTaskMasterScript.R** file. This file is present in the R 
+  sub-directory
 
-## Example
+* Documentation for all of the functions can be found in the **man** folder
 
-This is a basic example which shows you how to solve a common problem:
+* Note: Although I have used **roxygen2** package for commenting for all code
+        files. This repository is not a R package. There
+        is some more work that will go into this before this becomes a
+        R package. I will work on that after submitting this task.
+        
+## Data
 
-```{r example}
-# library(appsilonRShinyTaskAarshBatra)
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/master/examples>.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+* Raw marine data zip file that is used for all calculations is contained
+  in the **data-raw** directory.
