@@ -17,7 +17,9 @@ marine_ui <- function(id){
       p("Selected Ship Name:"),
       textOutput(NS(id, "dropdown_ship_name_selected")),
       tags$br(),
-      textOutput(NS(id, "test"))
+      textOutput(NS(id, "test")),
+
+      leafletOutput(NS(id, "leaflet"))
     )
 
   )
@@ -43,6 +45,10 @@ marine_server <- function(id, df){
 
     output$test <- renderText({
       paste(updatedData()$SHIPNAME) # paste(updatedData()) works
+    })
+
+    output$leaflet <- renderLeaflet({
+
     })
 
     # update_dropdown_input(session, "ship_name_dropdown",

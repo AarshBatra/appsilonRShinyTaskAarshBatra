@@ -11,7 +11,6 @@ consecutive points given all of its trips.
 ## App
 
 -   You can view the appsilonRShinyTaskAarshBatra app
-    [here](https://CRAN.R-project.org)
 
 -   To view underlying app code, look into the **app.R** file.
 
