@@ -15,21 +15,46 @@ marine_ui <- function(id){
                      unique(cleaned_data$SHIPNAME),  value = "MARINUS"),
 
       p("Selected Ship Name:"),
-      textOutput(NS(id, "dropdown_ship_name_selected"))
+      textOutput(NS(id, "dropdown_ship_name_selected")),
+      tags$br(),
+      textOutput(NS(id, "test"))
     )
+
   )
 }
 
 
-marine_server <- function(id){
+marine_server <- function(id, df){
   shiny::moduleServer(id, function(input, output, session){
     output$dropdown_ship_type_selected <- renderText({
       input$ship_type_dropdown
     })
 
+    ship_type <- reactive({input$ship_type_dropdown})
+
     output$dropdown_ship_name_selected <- renderText({
       input$ship_name_dropdown
     })
+
+    updatedData <- reactive({
+      nrow(df())
+    })
+
+
+    output$test <- renderText({
+      paste(updatedData())
+    })
+
+    # update_dropdown_input(session, "ship_name_dropdown",
+    #                       choices = updatedData()$SHIPNAME, value = "foo")
+
+    # observeEvent(input$ship_type_dropdown, {
+    #   updated_data <- dplyr::filter(data(), ship_type == input$ship_type_dropdown)
+    #   choices <- updated_data$SHIPNAME
+    #   update_dropdown_input(session, "ship_name_dropdown",
+    #             choices = choices, value = input$ship_name_dropdown)
+    #
+    # })
 
   })
 }
@@ -39,7 +64,42 @@ ui <- semanticPage(
 )
 
 server <- function(input, output, session)(
-  marine_server("m1")
+  marine_server("m1", reactive({cleaned_data}))
 )
 
 shiny::shinyApp(ui = ui, server = server)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
