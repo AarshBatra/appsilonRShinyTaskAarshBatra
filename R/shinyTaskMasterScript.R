@@ -147,24 +147,24 @@ max_dist <- -1 # This is the default placeholder which will be updated to
                # sign as this is just a dummy placeholder variable. The unit
                # in which this variable is measured is meters.
 
-for(i in 1 : (nrow(filtered_cleaned_data) - 1)){
- current_tibble <- filtered_cleaned_data[(i:(i+1)), ]
- current_tibble_dist_cols <- current_tibble[, (1 : num_col_needed_to_calc_dist)]
- curr_dist <- geodist::geodist(current_tibble_dist_cols,
-                               sequential = TRUE,
-                             measure = "geodesic")
- print(current_tibble)
- print(current_tibble_dist_cols)
- print(dim(current_tibble_dist_cols))
- print(curr_dist)
- print(i)
- if(abs(curr_dist) >= max_dist){
-   max_dist <- curr_dist
-   max_tibble <- current_tibble
- } else {
-   next
- }
-}
+# for(i in 1 : (nrow(filtered_cleaned_data) - 1)){
+#  current_tibble <- filtered_cleaned_data[(i:(i+1)), ]
+#  current_tibble_dist_cols <- current_tibble[, (1 : num_col_needed_to_calc_dist)]
+#  curr_dist <- geodist::geodist(current_tibble_dist_cols,
+#                                sequential = TRUE,
+#                              measure = "geodesic")
+#  print(current_tibble)
+#  print(current_tibble_dist_cols)
+#  print(dim(current_tibble_dist_cols))
+#  print(curr_dist)
+#  print(i)
+#  if(abs(curr_dist) >= max_dist){
+#    max_dist <- curr_dist
+#    max_tibble <- current_tibble
+#  } else {
+#    next
+#  }
+# }
 
 #
 #
