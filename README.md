@@ -10,7 +10,9 @@ consecutive points given all of its trips.
 
 ## App
 
--   You can view the appsilonRShinyTaskAarshBatra app
+-   You will be able to view the appsilonRShinyTaskAarshBatra app here
+    by Feb 5, 2021 23:59 IST. I will send over the link by e-mail and
+    also put it here in the README file.
 
 -   To view underlying app code, look into the **app.R** file.
 
