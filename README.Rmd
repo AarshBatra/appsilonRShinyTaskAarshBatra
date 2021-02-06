@@ -23,8 +23,8 @@ given all of its trips.
 
 ## App
 
-* You will be able to view the appsilonRShinyTaskAarshBatra app here by Feb 5, 2021 23:59 IST.
-  I will send over the link by e-mail and also put it here in the README file.
+* Version one of the app is online. Click   [here](https://aarsh.shinyapps.io/appsilonRShinyTaskAarshBatra/) to view the app.
+I will upload the final version of the app by end of Feb 7, 2021.
   
 * To view underlying app code, look into the **app.R** file.
 
