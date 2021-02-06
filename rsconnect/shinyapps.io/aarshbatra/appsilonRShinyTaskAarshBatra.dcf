@@ -1,0 +1,13 @@
+name: appsilonRShinyTaskAarshBatra
+title: appsilonRShinyTaskAarshBatra
+username:
+account: aarshbatra
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3587824
+bundleId: 4187142
+url: https://aarshbatra.shinyapps.io/appsilonRShinyTaskAarshBatra/
+when: 1612572545.68378
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .Rbuildignore|DESCRIPTION|NAMESPACE|README.md|README.Rmd|data-raw/DATASET.R|data-raw/ships.csv|data-raw/ships_04112020.zip|man/clean_raw_data.Rd|man/filter_cleaned_data.Rd|man/max_dist_travelled.Rd|man/read_raw_data.Rd|man/figures/README-pressure-1.png

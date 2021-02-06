@@ -19,6 +19,7 @@ library(magrittr)
 library(data.table)
 library(lubridate)
 library(roxygen2)
+library(rsconnect)
 library(testthat)
 library(shiny)
 library(ggplot2)
@@ -194,10 +195,10 @@ max_dist_travelled <- function(cleaned_data,
 
 
 # exploring: raw dataset-------------------------------------------------------
-raw_data <- read_raw_data(path_to_file = "data-raw/ships.csv")
-dim(raw_data)
-length(unique(raw_data$SHIP_ID))
-base::summary(raw_data)
+# raw_data <- read_raw_data(path_to_file = "data-raw/ships.csv")
+# dim(raw_data)
+# length(unique(raw_data$SHIP_ID))
+# base::summary(raw_data)
 
 
 # All function definitions completed-------------------------------------------
@@ -227,7 +228,7 @@ data_for_leaflet_map <- max_dist_travelled(cleaned_data = cleaned_data,
                                            filter_ship_name = "MARINUS")
 
 
-leaflet::leaflet() %>%
+leafletMapTest <- leaflet::leaflet() %>%
   setView(lng = 18.9, lat = 54.8 , zoom = 3) %>%
   addProviderTiles("Esri.WorldStreetMap") %>%
   addAwesomeMarkers(
