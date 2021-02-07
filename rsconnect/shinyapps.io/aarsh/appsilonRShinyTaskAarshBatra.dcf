@@ -5,9 +5,9 @@ account: aarsh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3592708
-bundleId: 4188606
+bundleId: 4192207
 url: https://aarsh.shinyapps.io/appsilonRShinyTaskAarshBatra/
-when: 1612613653.18752
+when: 1612711807.27852
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .Rbuildignore|DESCRIPTION|NAMESPACE|README.md|README.Rmd|data-raw/DATASET.R|data-raw/ships.csv|data-raw/ships_04112020.zip|man/clean_raw_data.Rd|man/filter_cleaned_data.Rd|man/max_dist_travelled.Rd|man/read_raw_data.Rd|man/figures/README-pressure-1.png
+ignoredFiles: .Rbuildignore|DESCRIPTION|LICENSE.txt|NAMESPACE|README.md|README.Rmd|data-raw/DATASET.R|data-raw/ships.csv|data-raw/ships_04112020.zip|inst/tests/tests.R|man/clean_raw_data.Rd|man/filter_cleaned_data.Rd|man/max_dist_travelled.Rd|man/read_raw_data.Rd|man/figures/README-pressure-1.png

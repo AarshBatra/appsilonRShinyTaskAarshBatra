@@ -1,12 +1,13 @@
-## R Shiny Data Task===========================================================
+## Appsilon R Shiny Task master script file: Aarsh Batra=======================
 
 # metadata---------------------------------------------------------------------
 # author: Aarsh Batra
-# date: February 2, 2021
+# Start Date: February 2, 2021
 # R version: 4.0.3 (2020-10-10)
 # Platform: x86_64-w64-mingw32/x64 (64-bit)
 # Running under: Windows 10 x64 (build 18363)
 # R Studio version: 1.4.1103
+# e-mail: aarshbatra.in@gmail.com
 
 # libraries--------------------------------------------------------------------
 library(tidyverse)
@@ -122,10 +123,11 @@ filter_cleaned_data <- function(cleaned_data, ship_type = "Tanker",
 }
 
 
-#' Calculate max distance travelled between two (lat, lon) points
+#' Calculate max distance travelled between two (lat, lon) points.
 #'
-#' Function that calculates max distance traveled (b/w 2 consecutive points)
-#' for a given ship_type/ship_name pair
+#' Function that calculates max distance travelled (b/w 2 consecutive points)
+#' from a given ship's travel history. Ship is selected using
+#' \code{filter_ship_type} and \code{filter_ship_name} filters),
 #'
 #' @importFrom dplyr filter
 #' @importFrom base matrix colnames abs
@@ -152,7 +154,8 @@ filter_cleaned_data <- function(cleaned_data, ship_type = "Tanker",
 #' @export
 
 max_dist_travelled <- function(cleaned_data,
-                               filter_ship_type = "Tanker", filter_ship_name = "MARINUS"){
+                               filter_ship_type = "Tanker",
+                               filter_ship_name = "MARINUS"){
 
   # filter the cleaned data
   filtered_cleaned_data <- cleaned_data %>%
@@ -173,10 +176,18 @@ max_dist_travelled <- function(cleaned_data,
   # sign as this is just a dummy placeholder variable. The unit
   # in which this variable is measured is meters.
 
+
+  # The loop takes in the filtered cleaned data set (given ship_type and
+  # ship_name filters). It goes through this dataset 2 consecutive rows
+  # at a time, calculating distance travelled b/w those two
+  # points. Then it compares this distance with the "max_dist" variable
+  # and updates the 'max_dist' and the 'max_tibble' variable if the distance
+  # in the current iteration is greater than or equal to the 'max_dist'
+  # variable.
   for(i in 1 : (nrow(filtered_cleaned_data) - 1)){
     current_tibble <- filtered_cleaned_data[(i:(i+1)), ]
     current_tibble_dist_cols <- current_tibble[,
-                                               (1 : num_col_needed_to_calc_dist)]
+                                  (1 : num_col_needed_to_calc_dist)]
     curr_dist <- geodist::geodist(current_tibble_dist_cols,
                                   sequential = TRUE,
                                   measure = "geodesic")
@@ -191,18 +202,16 @@ max_dist_travelled <- function(cleaned_data,
   return(list(max_dist, max_tibble))
 }
 
-
+# All function definitions completed-------------------------------------------
+#-----------------------------------------------------------------------------#
+###############################################################################
 
 
 # exploring: raw dataset-------------------------------------------------------
-# raw_data <- read_raw_data(path_to_file = "data-raw/ships.csv")
+raw_data <- read_raw_data(path_to_file = "data-raw/ships.csv")
 # dim(raw_data)
 # length(unique(raw_data$SHIP_ID))
 # base::summary(raw_data)
-
-
-# All function definitions completed-------------------------------------------
-#-----------------------------------------------------------------------------#
 
 
 
@@ -217,24 +226,35 @@ cleaned_data_test_case <- cleaned_data %>%
   dplyr::summarise(var_in_lat = sd(LAT), var_in_lon = sd(LON)) %>%
   dplyr::filter(var_in_lat == max(var_in_lat), var_in_lon == max(var_in_lon))
 
-# it turns out that the duo with ship_type = "Tanker" and ship_name = "MARINUS"
-# has the most variation in Latitude and Longitude (together), so for the
-# filtering function I have set these values as the default values.
+# it turns out that the duo with ship_type = "Tanker" and
+# ship_name = "MARINUS" has the most variation in Latitude and Longitude
+# (together), so for the filtering function I have set these values as
+# the default values.
 
-filtered_cleaned_data <- filter_cleaned_data(cleaned_data)
+filtered_cleaned_data <- filter_cleaned_data(cleaned_data,
+                                             ship_type = "Tanker",
+                                             ship_name = "MARINUS")
 
+# preparing the dataset that will be used to generate the leaflet map
 data_for_leaflet_map <- max_dist_travelled(cleaned_data = cleaned_data,
                                            filter_ship_type = "Tanker",
                                            filter_ship_name = "MARINUS")
 
-
+# leaflet map generated
 leafletMapTest <- leaflet::leaflet() %>%
-  setView(lng = 18.9, lat = 54.8 , zoom = 3) %>%
-  addProviderTiles("Esri.WorldStreetMap") %>%
-  addAwesomeMarkers(
-    data = data_for_leaflet_map[[2]][, (1:2)]
-  ) %>%
-  addPolylines(lng = unlist(data_for_leaflet_map[[2]][(1:2), 1]),
+  leaflet::setView(lng = unlist(data_for_leaflet_map[[2]][(1:2), 1])[[1]][1],
+          lat = unlist(data_for_leaflet_map[[2]][(1:2), 2])[[1]][1] ,
+          zoom = 3) %>%
+  leaflet::addProviderTiles("Esri.WorldStreetMap") %>%
+  leaflet::addAwesomeMarkers(
+    data = data_for_leaflet_map[[2]][, (1:2)],
+   label = str_c("Shipname: ", data_for_leaflet_map[[2]]$SHIPNAME[1], "---",
+               "Departing from: ", data_for_leaflet_map[[2]]$DESTINATION[1],
+               "---", "Arriving at: ",
+               data_for_leaflet_map[[2]]$DESTINATION[2], "---",
+               "Distance Travelled (in meters): ",
+               data_for_leaflet_map[[1]])) %>%
+  leaflet::addPolylines(lng = unlist(data_for_leaflet_map[[2]][(1:2), 1]),
                lat = unlist(data_for_leaflet_map[[2]][(1:2), 2]))
 
 

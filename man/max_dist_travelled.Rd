@@ -2,7 +2,7 @@
 % Please edit documentation in R/shinyTaskMasterScript.R
 \name{max_dist_travelled}
 \alias{max_dist_travelled}
-\title{Calculate max distance travelled between two (lat, lon) points}
+\title{Calculate max distance travelled between two (lat, lon) points.}
 \usage{
 max_dist_travelled(
   cleaned_data,
@@ -26,8 +26,9 @@ correspond to the points b/w which the given ship in question
 travelled the maximum distance.
 }
 \description{
-Function that calculates max distance traveled (b/w 2 consecutive points)
-for a given ship_type/ship_name pair
+Function that calculates max distance travelled (b/w 2 consecutive points)
+from a given ship's travel history. Ship is selected using
+\code{filter_ship_type} and \code{filter_ship_name} filters),
 }
 \examples{
 max_dist_travelled(cleaned_data = cleaned_dataset,
